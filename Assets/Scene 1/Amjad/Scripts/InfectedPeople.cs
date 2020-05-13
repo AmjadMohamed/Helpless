@@ -40,7 +40,7 @@ public class InfectedPeople : MonoBehaviour
     {
         
         
-        if (m_Target != null && Vector3.Distance(transform.position, Playertofollow.transform.position) < m_AgroDisctance)
+        if (m_Target != null && Vector3.Distance(transform.position, Playertofollow.transform.position) < m_AgroDisctance && Playertofollow.transform.tag != "Infected")
         {
             return true;
         }
@@ -49,7 +49,7 @@ public class InfectedPeople : MonoBehaviour
 
     void Update()
     {
-        Debug.Log(Playertofollow);
+        //Debug.Log(Playertofollow);
 
         if (agent.pathPending)
             return;
@@ -109,24 +109,6 @@ public class InfectedPeople : MonoBehaviour
         m_DestIdx = Random.Range(0, m_WayPoints.Length);
 
     }
-    void Patrol()
-    {
-        //index = Random.Range(0, waypoints.Length);
-
-        //index = index == m_NumOfPOints - 1 ? 0 : index + 1;
-
-    }
-
-    void Tick()
-    {
-        //agent.destination = waypoints[index].position;
-        //agent.speed = agentSpeed / 2;
-
-        //if (player != null && Vector3.Distance(transform.position, player.position) < aggroRange)
-        //{
-        //    agent.destination = player.position;
-        //    agent.speed = agentSpeed;
-        //}
-    }
+    
 
 }

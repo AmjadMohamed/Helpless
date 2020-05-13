@@ -6,8 +6,16 @@ using UnityEngine.UI;
 public class PlayerController : MonoBehaviour
 {
     public static PlayerController m_PlayerController;
+    InfectedPeople m_InfectedPeople;
 
     public Material InfectedMaterial;
+
+    public RuntimeAnimatorController EnemyAnimatorController;
+
+    private void Start()
+    {
+        m_InfectedPeople = GetComponent<InfectedPeople>();
+    }
 
     private void OnTriggerEnter(Collider other)
     {
@@ -41,7 +49,9 @@ public class PlayerController : MonoBehaviour
                     sm.GetComponent<SkinnedMeshRenderer>().material = InfectedMaterial;
                 }
 
-                gameObject.AddComponent<InfectedPeople>();
+                m_InfectedPeople.enabled = true;
+                GetComponent<Animator>().runtimeAnimatorController = EnemyAnimatorController;
+               
             }
         }
     }
