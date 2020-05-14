@@ -12,9 +12,16 @@ public class PlayerController : MonoBehaviour
 
     public RuntimeAnimatorController EnemyAnimatorController;
 
+
+
     private void Start()
     {
         m_InfectedPeople = GetComponent<InfectedPeople>();
+
+        if(!m_PlayerController)
+        {
+            m_PlayerController = this;
+        }
     }
 
     private void OnTriggerEnter(Collider other)
@@ -51,7 +58,8 @@ public class PlayerController : MonoBehaviour
 
                 m_InfectedPeople.enabled = true;
                 GetComponent<Animator>().runtimeAnimatorController = EnemyAnimatorController;
-               
+
+                UIManager.UIMgr.GotInfected++;
             }
         }
     }

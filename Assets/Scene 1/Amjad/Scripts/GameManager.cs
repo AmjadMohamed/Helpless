@@ -9,18 +9,22 @@ public class GameManager : MonoBehaviour
 
     PlayerController player;
 
+    //public GameObject audioSourceObject;
+
     private void Awake()
     {
         // setup reference to game manager
         if (gm == null)
             gm = this.GetComponent<GameManager>();
 
-        DontDestroyOnLoad(this); 
+        DontDestroyOnLoad(this);
+
+        Time.timeScale = 0;
     }
 
     void Start()
     {
-        player = FindObjectOfType<PlayerController>(); 
+        player = FindObjectOfType<PlayerController>();
     }
 
     void Update()
@@ -40,5 +44,11 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    
+    public void StartGameButton()
+    {
+        UIManager.UIMgr.InstrutionsPanel.SetActive(false);
+        UIManager.UIMgr.AliveCounterUI.SetActive(true);
+        Time.timeScale = 1;
+        //audioSourceObject.SetActive(true);
+    }
 }

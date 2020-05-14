@@ -4,6 +4,9 @@ using UnityEngine.AI;
 
 public class InfectedPeople : MonoBehaviour
 {
+    public static InfectedPeople instance;
+
+
     // Patrol
     [SerializeField] Transform[] m_WayPoints;
     bool m_bPatrolling;
@@ -12,7 +15,8 @@ public class InfectedPeople : MonoBehaviour
     [SerializeField] float m_PatrolNextLag = 1.0f;
 
     // Attack and eye
-    private GameObject[] m_Target;
+    [HideInInspector]
+    public GameObject[] m_Target;
     private GameObject Playertofollow;
     Transform m_Eye;
     Vector3 m_TargetLastPos;
@@ -35,6 +39,11 @@ public class InfectedPeople : MonoBehaviour
 
         m_Target = GameObject.FindGameObjectsWithTag("Player");
         Playertofollow = m_Target[Random.Range(0, m_Target.Length)];
+
+        if(!instance)
+        {
+            instance = this;
+        }
     }
     bool CheckTarget()
     {
