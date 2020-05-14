@@ -11,15 +11,23 @@ public class UIManager : MonoBehaviour
     public GameObject PauseMenu;
     public GameObject InstrutionsPanel;
     public GameObject AliveCounterUI;
+    public GameObject LosePanel;
     public Text Alive_UI_Text;
+    public Text Score;
+    public Text HighScore;
 
     [HideInInspector]
     public int GotInfected;
     private GameObject[] NormalPeople;
 
+    private void Awake()
+    {
+        InstrutionsPanel.SetActive(true);
+    }
+
     private void Start()
     {
-        if(!UIMgr)
+        if (!UIMgr)
         {
             UIMgr = this;
         }
@@ -29,8 +37,20 @@ public class UIManager : MonoBehaviour
 
     private void Update()
     {
-        Alive_UI_Text.text = (NormalPeople.Length - GotInfected).ToString()  + "/" + (NormalPeople.Length).ToString();
+        Alive_UI_Text.text = (NormalPeople.Length - GotInfected).ToString() + "/" + (NormalPeople.Length).ToString();
+
+        scoreUpdate();
     }
+
+
+
+    void scoreUpdate()
+    {
+        Score.text = "you survived: " + /* score.tostring() + */  " waves";
+        HighScore.text = "highest survived: " + /* playerprefs.getint("Highest") + */ " waves";
+    }
+
+    
 
 
 }
