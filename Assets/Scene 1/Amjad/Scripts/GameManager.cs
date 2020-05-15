@@ -34,8 +34,10 @@ public class GameManager : MonoBehaviour
     private const float NEW_GAME_COUNTDOWN = 2.0f;
     private const float NEW_STAGE_COUNTDOWN = 10.0f;
 
-    private bool gameOver;
-    private bool gameStart;
+    [HideInInspector]
+    public bool gameOver;
+    [HideInInspector]
+    public bool gameStart;
 
     float dustDamage = 0.5f;
     float dustDifficulty = 0.5f;
@@ -65,7 +67,7 @@ public class GameManager : MonoBehaviour
             // destroy player
             // display game over screen with sUrViVeD XX sTaGeS
 
-            LoseState();
+            //LoseState();
 
         }
         else
@@ -273,9 +275,9 @@ public class GameManager : MonoBehaviour
         return sample;
     }
 
-    public void LoseState()
+    /*public void LoseState()
     {
         UIManager.UIMgr.LosePanel.SetActive(true);
         Time.timeScale = 0;
-    }
+    }*/
 }

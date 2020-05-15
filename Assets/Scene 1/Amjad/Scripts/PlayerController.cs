@@ -129,7 +129,9 @@ public class PlayerController : MonoBehaviour
     void Kill()
     {
         health = 0;
-        GameManager.gm.LoseState();
+
+        UIManager.UIMgr.LosePanel.SetActive(true);
+        Time.timeScale = 0;
     }
 
 
