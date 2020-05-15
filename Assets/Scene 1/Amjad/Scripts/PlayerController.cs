@@ -12,9 +12,11 @@ public class PlayerController : MonoBehaviour
 
     public RuntimeAnimatorController EnemyAnimatorController;
 
-    public Slider m_Slider;
-    public Image fill;
-    public GameObject PlayerCanvas;
+
+    public bool canMove;
+    public bool invincible;
+    public float health;
+
 
     private void Start()
     {
@@ -24,6 +26,9 @@ public class PlayerController : MonoBehaviour
         {
             m_PlayerController = this;
         }
+        canMove = true;
+        invincible = false;
+        health = 100f;
     }
 
     private void Update()
@@ -84,6 +89,8 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    public void DealDamage(float amount) { health -= amount; }
+    public bool IsDead() { return health <= 0; }
 
     void healthbar()
     {
