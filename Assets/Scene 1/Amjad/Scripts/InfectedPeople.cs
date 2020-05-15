@@ -8,23 +8,17 @@ public class InfectedPeople : MonoBehaviour
 
 
     // Patrol
-    [SerializeField] Transform[] m_WayPoints;
+    [System.NonSerialized] Transform[] m_WayPoints = null;
     bool m_bPatrolling;
     int m_DestIdx;
     bool m_bArrived;
     [SerializeField] float m_PatrolNextLag = 1.0f;
 
     // Attack and eye
-    [HideInInspector]
-    public GameObject[] m_Target;
-    private GameObject Playertofollow;
+    private PlayerController Playertofollow;
     Transform m_Eye;
     Vector3 m_TargetLastPos;
     [SerializeField] float m_AgroDisctance = 15.0f;
-
-
-
-
 
     Animator animator;
     NavMeshAgent agent;
@@ -37,19 +31,31 @@ public class InfectedPeople : MonoBehaviour
         m_Eye = transform.Find("Eye");
         m_TargetLastPos = transform.position;
 
-        m_Target = GameObject.FindGameObjectsWithTag("Player");
-        Playertofollow = m_Target[Random.Range(0, m_Target.Length)];
-
         if(!instance)
         {
             instance = this;
         }
     }
+
+    public void SetWaypoints(Transform[] waypoints) {
+        m_WayPoints = waypoints;
+    }
+
     bool CheckTarget()
     {
-        
-        
-        if (m_Target != null && Vector3.Distance(transform.position, Playertofollow.transform.position) < m_AgroDisctance && Playertofollow.transform.tag != "Infected")
+        // todo; be smarter please
+        // mohamed sheashaa
+
+        if (Playertofollow != null && (Playertofollow.tag == "Infected" || Playertofollow.invincible)) {
+            Playertofollow = null;
+        }
+
+        if (Playertofollow == null) {
+            var targets = GameManager.gm.players;
+            Playertofollow = targets[Random.Range(0, targets.Count - 1)];
+        }
+
+        if (Playertofollow != null && Vector3.Distance(transform.position, Playertofollow.transform.position) < m_AgroDisctance)
         {
             return true;
         }
@@ -60,7 +66,7 @@ public class InfectedPeople : MonoBehaviour
     {
         //Debug.Log(Playertofollow);
 
-        if (agent.pathPending)
+        if (agent == null || agent.pathPending)
             return;
 
         if (m_bPatrolling)
@@ -116,7 +122,6 @@ public class InfectedPeople : MonoBehaviour
         m_bArrived = false;
         agent.destination = m_WayPoints[m_DestIdx].position;
         m_DestIdx = Random.Range(0, m_WayPoints.Length);
-
     }
     
 

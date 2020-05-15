@@ -4,8 +4,7 @@ using UnityEngine;
 
 public class CameraFollow : MonoBehaviour
 {
-
-    public Transform player;
+    [System.NonSerialized] public Transform player;
     public Vector3 offset;
 
     //public float LeftClamp = 0;
@@ -13,6 +12,9 @@ public class CameraFollow : MonoBehaviour
     //public float TopClamp = 0;
     //public float DownClamp = 0;
 
+    private void Start() {
+        player = GameManager.gm.mainPlayer.transform;
+    }
 
     private void Update()
     {

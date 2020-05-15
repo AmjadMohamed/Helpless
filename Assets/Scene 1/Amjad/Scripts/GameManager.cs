@@ -1,62 +1,77 @@
-﻿using System;
+﻿using JetBrains.Annotations;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Networking;
 using Random = UnityEngine.Random;
 
 public class GameManager : MonoBehaviour
 {
+    // constants
+    public const int RNG_TRIES = 1000;
+    public const float NEW_GAME_COUNTDOWN = 2.0f;
+    public const float NEW_STAGE_COUNTDOWN = 10.0f;
+
+    // instance
     public static GameManager gm = null;
 
-    List<PlayerController> players = new List<PlayerController>();
-    PlayerController mainPlayer;
-
-    List<InfectedPeople> infected = new List<InfectedPeople>();
-    public GameObject infectedParent; // unity does not have a clean way to find inactive GOs
-
-
+    // public fields
+    public int playerCount = 20;
+    public int enemyCount = 40;
+    public float isolationPointsSpread = 100.0f;
+    public List<PlayerController> players = new List<PlayerController>();
+    public List<InfectedPeople> infected = new List<InfectedPeople>();
     //public GameObject audioSourceObject;
 
-    [SerializeField]
-    private Transform rngArea;
-    [SerializeField]
-    private Transform[] rngExclude;
+    // prefabs
+    [SerializeField] Camera mainCamera = null;
+    [SerializeField] GameObject mainPlayerPrefab = null;
+    [SerializeField] GameObject infectedPrefab = null;
+    [SerializeField] GameObject normalPrefab = null;
+    [SerializeField] GameObject isolationPointPrefab;
+    [SerializeField] Transform rngArea;
+    [SerializeField] GameObject infectedParent;
+    [SerializeField] GameObject normalParent;
+    [SerializeField] GameObject isolationPointsParent;
+    [SerializeField] Transform[] rngExclude;
+    [SerializeField] Transform[] infectedWaypoints;
 
-    private const int RNG_TRIES = 1000;
+    // non-serialized fields
+    [NonSerialized] public PlayerController mainPlayer;
+    [NonSerialized] public int initialNormalCount = 0;
 
-    private float isolationPointRadius;
-    [SerializeField]
-    private float isolationPointsSpread = 100.0f;
-    [SerializeField]
-    private GameObject isolationPointPrefab;
-    private GameObject isolationPointsParent;
-
-    private const float NEW_GAME_COUNTDOWN = 2.0f;
-    private const float NEW_STAGE_COUNTDOWN = 10.0f;
-
-    [HideInInspector]
-    public bool gameOver;
-    [HideInInspector]
-    public bool gameStart;
-
+    // fields
+    float isolationPointRadius;
     float dustDamage = 0.5f;
     float dustDifficulty = 0.5f;
-
     float time = 0f;
+
+    // properties
+    public bool gameOver { get; private set; }
+    public bool gameStart { get; private set; }
 
     private void Awake()
     {
         // setup reference to game manager
-        if (gm == null)
-            gm = this.GetComponent<GameManager>();
+        if (gm) {
+            Destroy(GameManager.gm.gameObject);
+        }
+
+        gm = this;
 
         DontDestroyOnLoad(this);
 
         Time.timeScale = 0;
 
+        var collider = isolationPointPrefab.GetComponent<CapsuleCollider>();
+        isolationPointRadius = collider.radius * collider.transform.localScale.x;
 
-
-        isolationPointRadius = isolationPointPrefab.GetComponent<CapsuleCollider>().radius * isolationPointPrefab.GetComponent<CapsuleCollider>().transform.localScale.x;
+        if (!NetworkClient.active && !NetworkServer.active) {
+            var playerGO = Instantiate(mainPlayerPrefab);
+            playerGO.GetComponent<InfectedPeople>().SetWaypoints(infectedWaypoints);
+            SetMainPlayer(playerGO.GetComponent<PlayerController>());
+        }
     }
 
     void Update()
@@ -91,9 +106,7 @@ public class GameManager : MonoBehaviour
                 DealDustDamageToPlayers();
                 gameOver = mainPlayer.IsDead();
 
-
                 //Debug.Log(mainPlayer.health);
-
             }
 
         }
@@ -111,33 +124,16 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    void GetCurrentPlayers()
-    {
-        players.Clear();
-
-        GameObject[] playerGOs = GameObject.FindGameObjectsWithTag("Player");
-        foreach (GameObject playerGO in playerGOs)
-        {
-            players.Add(playerGO.GetComponent<PlayerController>());
+    public void SetMainPlayer(PlayerController player) {
+        if (mainPlayer != null) {
+            mainPlayer.isMainPlayer = false;
+            players.Remove(mainPlayer);
         }
 
-        mainPlayer = GameObject.Find("Main Player").GetComponent<PlayerController>();
-
-    }
-
-    void GetCurrentInfected()
-    {
-        infected.Clear();
-
-        //GameObject[] infectedGOs = GameObject.FindGameObjectsWithTag("Infected");
-        //foreach (GameObject infectedGO in infectedGOs)
-        //{
-        //    infected.Add(infectedGO.GetComponent<InfectedPeople>());
-        //}
-
-        for (int i = 0; i < infectedParent.transform.childCount; i++)
-        {
-            infected.Add(infectedParent.transform.GetChild(i).GetComponent<InfectedPeople>());
+        mainPlayer = player;
+        mainPlayer.isMainPlayer = true;
+        if (mainPlayer != null) {
+            players.Add(mainPlayer);
         }
     }
 
@@ -156,50 +152,64 @@ public class GameManager : MonoBehaviour
     {
         yield return new WaitForSeconds(NEW_GAME_COUNTDOWN);
 
-        GetCurrentPlayers();
         gameStart = true;
 
+        var points = GenerateRandomPoints(playerCount - 1); // except main player (-1)
+        for (int i = 0; i < points.Count; i++) {
+            var point = points[i];
+            var playerController = Instantiate(normalPrefab, point, Quaternion.identity, normalParent.transform)
+                .GetComponent<PlayerController>();
+
+            playerController.GetComponent<InfectedPeople>().SetWaypoints(infectedWaypoints);
+            playerController.name = $"Player ({i})";
+            playerController.GetComponentInChildren<Canvas>().worldCamera = mainCamera;
+            playerController.canMove = true;
+            playerController.invincible = false;
+            players.Add(playerController);
+        }
+
+        initialNormalCount = players.Count;
         yield return NewStage();
     }
 
     IEnumerator NewStage()
     {
-
-        if (isolationPointsParent == null) 
-        {
+        if (isolationPointsParent == null)  {
             isolationPointsParent = new GameObject("Isolation Points");
-        };
-
-        for (int i = 0; i < isolationPointsParent.transform.childCount; i++)
-        {
-            Destroy(isolationPointsParent.transform.GetChild(i).gameObject);
         }
 
-        GetCurrentPlayers();
-        List<Vector3> points = GenerateRandomPoints(players.Count - 1);
-        foreach (Vector3 point in points)
-        {
-            GameObject isolationPoint = Instantiate(isolationPointPrefab);
-            isolationPoint.transform.position = point;
-            isolationPoint.transform.parent = isolationPointsParent.transform;
+        for (int childIndex = 0; childIndex < isolationPointsParent.transform.childCount; childIndex++) {
+            Destroy(isolationPointsParent.transform.GetChild(childIndex).gameObject);
         }
 
-        foreach (var player in players)
-        {
-            player.canMove= true;
-            player.invincible = false;
+        // create players
+        List<Vector3> points;
+        if (!NetworkClient.active && !NetworkServer.active) {
+            foreach (var player in players) {
+                player.canMove = true;
+                player.invincible = false;
+            }
 
+            points = GenerateRandomPoints(enemyCount);
+            for (int i = 0; i < points.Count; i++) {
+                var point = points[i];
+                var infectedController = Instantiate(infectedPrefab, point, Quaternion.identity, normalParent.transform)
+                    .GetComponent<InfectedPeople>();
+
+                infectedController.name = $"Infected ({i})";
+                infectedController.SetWaypoints(infectedWaypoints);
+                infected.Add(infectedController);
+            }
         }
 
-        GetCurrentInfected();
-        infectedParent.SetActive(true);
-
-
+        points = GenerateRandomPoints(players.Count - 1);
+        foreach (Vector3 point in points) {
+            Instantiate(isolationPointPrefab, point, Quaternion.identity, isolationPointsParent.transform);
+        }
 
         yield return new WaitForSeconds(NEW_STAGE_COUNTDOWN);
 
         dustDamage = Mathf.Min(dustDamage + dustDifficulty, 5);
-
         if (!gameOver) yield return NewStage();
     }
 

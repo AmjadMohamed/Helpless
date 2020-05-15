@@ -18,7 +18,6 @@ public class UIManager : MonoBehaviour
 
     [HideInInspector]
     public int GotInfected;
-    private GameObject[] NormalPeople;
 
     private void Awake()
     {
@@ -31,13 +30,12 @@ public class UIManager : MonoBehaviour
         {
             UIMgr = this;
         }
-
-        NormalPeople = GameObject.FindGameObjectsWithTag("Player");
     }
 
     private void Update()
     {
-        Alive_UI_Text.text = (NormalPeople.Length - GotInfected).ToString() + "/" + (NormalPeople.Length).ToString();
+        var initialNormalCount = GameManager.gm.initialNormalCount;
+        Alive_UI_Text.text = (initialNormalCount - GotInfected).ToString() + "/" + (initialNormalCount).ToString();
 
         scoreUpdate();
     }

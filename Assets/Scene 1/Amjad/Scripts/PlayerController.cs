@@ -23,6 +23,9 @@ public class PlayerController : MonoBehaviour
     [HideInInspector]
     public float health;
 
+    [System.NonSerialized]
+    public bool isMainPlayer = false;
+
 
     private void Start()
     {
@@ -54,30 +57,29 @@ public class PlayerController : MonoBehaviour
             }
 
 
-            else if (this.name == "Main Player" && !invincible)
+            else if (this.isMainPlayer)
             {
+                // TODO: this is not suitable for multiplier
+                // please use network server
+                if (!invincible) {
+                    /*
+                    SkinnedMeshRenderer[] childs = GetComponentsInChildren<SkinnedMeshRenderer>();
 
-                // get infected or lose
-                /* SkinnedMeshRenderer[] childs = GetComponentsInChildren<SkinnedMeshRenderer>();
+                    foreach (SkinnedMeshRenderer sm in childs)
+                    {
+                        sm.GetComponent<SkinnedMeshRenderer>().material = InfectedMaterial;
+                    }
 
-                 foreach (SkinnedMeshRenderer sm in childs)
-                 {
-                     sm.GetComponent<SkinnedMeshRenderer>().material = InfectedMaterial;
-                 }
+                    LoseState();*/
+                    Kill();
+                }
+            } else {
+                GameManager.gm.players.Remove(this);
 
-
-                 LoseState();*/
-                Kill();
-
-            }
-
-            else if (this.name != "Main Player")
-            {
                 this.transform.tag = "Infected";
                 SkinnedMeshRenderer[] childs = GetComponentsInChildren<SkinnedMeshRenderer>();
 
-                foreach (SkinnedMeshRenderer sm in childs)
-                {
+                foreach (SkinnedMeshRenderer sm in childs) {
                     sm.GetComponent<SkinnedMeshRenderer>().material = InfectedMaterial;
                 }
 
@@ -88,7 +90,6 @@ public class PlayerController : MonoBehaviour
 
                 // to destroy the health bar after getting infected
                 Destroy(PlayerCanvas);
-
             }
         }
     }
@@ -98,6 +99,9 @@ public class PlayerController : MonoBehaviour
 
     void healthbar()
     {
+        if (m_InfectedPeople.enabled)
+            return;
+
         var sliderFill = m_Slider.value;
 
         Color orange = new Color(1f, 0.66f, 0.11f);

@@ -960,7 +960,7 @@ GameObject:
   - component: {fileID: 2024219351670275532}
   - component: {fileID: 5537247680914582618}
   - component: {fileID: 1194829501}
-  - component: {fileID: 1194829502}
+  - component: {fileID: 7446330966795746789}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -1124,6 +1124,9 @@ MonoBehaviour:
   m_Slider: {fileID: 597366789}
   fill: {fileID: 1551788569}
   PlayerCanvas: {fileID: 982298892}
+  canMove: 0
+  invincible: 0
+  health: 0
 --- !u!195 &1194829501
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -1146,7 +1149,7 @@ NavMeshAgent:
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
---- !u!114 &1194829502
+--- !u!114 &7446330966795746789
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1158,16 +1161,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 028f08320d19d4d459ce3d6a7e79bc7e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_WayPoints:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
   m_PatrolNextLag: 1
   m_Target: []
   m_AgroDisctance: 15

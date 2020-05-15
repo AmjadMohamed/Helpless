@@ -15187,19 +15187,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 028f08320d19d4d459ce3d6a7e79bc7e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  patrolTime: 15
-  aggroRange: 15
-  waypoints:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  m_NumOfPoints: 3
+  m_WayPoints: []
+  m_PatrolNextLag: 1
+  m_Target: []
+  m_AgroDisctance: 15
 --- !u!195 &283978101
 NavMeshAgent:
   m_ObjectHideFlags: 0
