@@ -8,13 +8,20 @@ using TMPro;
 public class UIManager : MonoBehaviour
 {
     public static UIManager UIMgr;
+
+    public GameObject AudioSourceObject;
     public GameObject PauseMenu;
     public GameObject InstrutionsPanel;
-    public GameObject AliveCounterUI;
+    public GameObject InGameUI;
     public GameObject LosePanel;
     public Text Alive_UI_Text;
-    public Text Score;
+    public Text WavesSurvived;
     public Text HighScore;
+    public Text CurrentWaveCounterText;
+    public GameObject StartTimer;
+    public Text StartTimerText;
+    public GameObject StageTimer;
+    public Text StageTimerText;
 
     [HideInInspector]
     public int GotInfected;
@@ -44,11 +51,11 @@ public class UIManager : MonoBehaviour
 
     void scoreUpdate()
     {
-        Score.text = "you survived: " + /* score.tostring() + */  " waves";
+        WavesSurvived.text = "you survived: " + /* score.tostring() + */  " waves";
         HighScore.text = "highest survived: " + /* playerprefs.getint("Highest") + */ " waves";
     }
 
-    
+
 
 
 }

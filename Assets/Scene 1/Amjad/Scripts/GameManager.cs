@@ -10,8 +10,8 @@ public class GameManager : MonoBehaviour
 {
     // constants
     public const int RNG_TRIES = 1000;
-    public const float NEW_GAME_COUNTDOWN = 2.0f;
-    public const float NEW_STAGE_COUNTDOWN = 10.0f;
+    public const float NEW_GAME_COUNTDOWN = 5.0f;
+    public const float NEW_STAGE_COUNTDOWN = 15.0f;
 
     // instance
     public static GameManager gm = null;
@@ -46,6 +46,9 @@ public class GameManager : MonoBehaviour
     float dustDamage = 0.5f;
     float dustDifficulty = 0.5f;
     float time = 0f;
+    float NewStageCountdown = NEW_STAGE_COUNTDOWN;
+    float NewGameCountdown = NEW_GAME_COUNTDOWN;
+    int WaveCounter = 1;
 
     // properties
     public bool gameOver { get; private set; }
@@ -79,6 +82,8 @@ public class GameManager : MonoBehaviour
         if (gameOver)
         {
             gameStart = false;
+            UIManager.UIMgr.StageTimer.SetActive(false);
+            UIManager.UIMgr.InGameUI.SetActive(false);
             // destroy player
             // display game over screen with sUrViVeD XX sTaGeS
 
@@ -110,6 +115,10 @@ public class GameManager : MonoBehaviour
             }
 
         }
+
+
+        ScoreAndTimerUpdate();
+
     }
 
     void DealDustDamageToPlayers()
@@ -140,7 +149,6 @@ public class GameManager : MonoBehaviour
     public void StartGameButton()
     {
         UIManager.UIMgr.InstrutionsPanel.SetActive(false);
-        UIManager.UIMgr.AliveCounterUI.SetActive(true);
         Time.timeScale = 1;
         //audioSourceObject.SetActive(true);
 
@@ -150,8 +158,14 @@ public class GameManager : MonoBehaviour
 
     IEnumerator NewGame()
     {
+        UIManager.UIMgr.StartTimer.SetActive(true);
+        
+
         yield return new WaitForSeconds(NEW_GAME_COUNTDOWN);
 
+        UIManager.UIMgr.StartTimer.SetActive(false);
+        UIManager.UIMgr.InGameUI.SetActive(true);
+        UIManager.UIMgr.AudioSourceObject.SetActive(true);
         gameStart = true;
 
         var points = GenerateRandomPoints(playerCount - 1); // except main player (-1)
@@ -207,7 +221,12 @@ public class GameManager : MonoBehaviour
             Instantiate(isolationPointPrefab, point, Quaternion.identity, isolationPointsParent.transform);
         }
 
+        // reset stage counter
+        NewStageCountdown = NEW_STAGE_COUNTDOWN;
+        UIManager.UIMgr.StageTimer.SetActive(true);
         yield return new WaitForSeconds(NEW_STAGE_COUNTDOWN);
+
+        WaveCounter++;
 
         dustDamage = Mathf.Min(dustDamage + dustDifficulty, 5);
         if (!gameOver) yield return NewStage();
@@ -290,4 +309,27 @@ public class GameManager : MonoBehaviour
         UIManager.UIMgr.LosePanel.SetActive(true);
         Time.timeScale = 0;
     }*/
+
+    void ScoreAndTimerUpdate()
+    {
+        // set timers
+        NewGameCountdown -= Time.deltaTime;
+
+        UIManager.UIMgr.StartTimerText.text = (NewGameCountdown).ToString("0");
+
+        NewStageCountdown -= Time.deltaTime;
+
+        UIManager.UIMgr.StageTimerText.text = (NewStageCountdown).ToString("0");
+
+        //set current wave score
+        UIManager.UIMgr.CurrentWaveCounterText.text = "wave number: " + WaveCounter.ToString();
+
+        //set score 
+        UIManager.UIMgr.WavesSurvived.text = "you survived: " + WaveCounter.ToString() + " waves";
+        //setting highscore
+        if (WaveCounter > PlayerPrefs.GetInt("HighScore"))
+            PlayerPrefs.SetInt("HighScore", WaveCounter);
+
+        UIManager.UIMgr.HighScore.text = "highest survived: " + PlayerPrefs.GetInt("HighScore").ToString() + " waves";
+    }
 }
