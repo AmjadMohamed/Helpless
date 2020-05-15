@@ -8,8 +8,11 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager gm = null;
 
-    List<PlayerController> players;
+    List<PlayerController> players = new List<PlayerController>();
     PlayerController mainPlayer;
+
+    List<InfectedPeople> infected = new List<InfectedPeople>();
+    public GameObject infectedParent; // unity does not have a clean way to find inactive GOs
 
 
     //public GameObject audioSourceObject;
@@ -32,9 +35,12 @@ public class GameManager : MonoBehaviour
     private const float NEW_STAGE_COUNTDOWN = 10.0f;
 
     private bool gameOver;
+    private bool gameStart;
 
     float dustDamage = 0.5f;
     float dustDifficulty = 0.5f;
+
+    float time = 0f;
 
     private void Awake()
     {
@@ -55,6 +61,7 @@ public class GameManager : MonoBehaviour
     {
         if (gameOver)
         {
+            gameStart = false;
             // destroy player
             // display game over screen with sUrViVeD XX sTaGeS
         }
@@ -73,9 +80,17 @@ public class GameManager : MonoBehaviour
                     UIManager.UIMgr.PauseMenu.SetActive(false); // remove the pause UI
                 }
             }
-            DealDustDamageToPlayers();
 
-            gameOver = mainPlayer.IsDead();
+            if (gameStart)
+            {
+                DealDustDamageToPlayers();
+                gameOver = mainPlayer.IsDead();
+
+
+                Debug.Log(mainPlayer.health);
+
+            }
+
         }
     }
 
@@ -87,14 +102,13 @@ public class GameManager : MonoBehaviour
         // i capped the max damage at 5 .. this will happen at stage 10 (i think)
         foreach (PlayerController player in players)
         {
-            if (!player.IsInvincible()) player.DealDamage(dustDamage * Time.deltaTime);
+            if (!player.invincible) player.DealDamage(dustDamage * Time.deltaTime);
         }
     }
 
     void GetCurrentPlayers()
     {
-        if (players == null) players = new List<PlayerController>();
-        else if (players.Count > 0) players.Clear();
+        players.Clear();
 
         GameObject[] playerGOs = GameObject.FindGameObjectsWithTag("Player");
         foreach (GameObject playerGO in playerGOs)
@@ -104,6 +118,22 @@ public class GameManager : MonoBehaviour
 
         mainPlayer = GameObject.Find("Main Player").GetComponent<PlayerController>();
 
+    }
+
+    void GetCurrentInfected()
+    {
+        infected.Clear();
+
+        //GameObject[] infectedGOs = GameObject.FindGameObjectsWithTag("Infected");
+        //foreach (GameObject infectedGO in infectedGOs)
+        //{
+        //    infected.Add(infectedGO.GetComponent<InfectedPeople>());
+        //}
+
+        for (int i = 0; i < infectedParent.transform.childCount; i++)
+        {
+            infected.Add(infectedParent.transform.GetChild(i).GetComponent<InfectedPeople>());
+        }
     }
 
     public void StartGameButton()
@@ -121,19 +151,15 @@ public class GameManager : MonoBehaviour
     {
         yield return new WaitForSeconds(NEW_GAME_COUNTDOWN);
 
+        GetCurrentPlayers();
+        gameStart = true;
+
         yield return NewStage();
     }
 
     IEnumerator NewStage()
     {
-        GetCurrentPlayers();
 
-        foreach (var player in players)
-        {
-            player.SetMovement(true);
-            player.SetInvincibility(false);
-
-        }
         if (isolationPointsParent == null) 
         {
             isolationPointsParent = new GameObject("Isolation Points");
@@ -144,6 +170,7 @@ public class GameManager : MonoBehaviour
             Destroy(isolationPointsParent.transform.GetChild(i).gameObject);
         }
 
+        GetCurrentPlayers();
         List<Vector3> points = GenerateRandomPoints(players.Count - 1);
         foreach (Vector3 point in points)
         {
@@ -152,9 +179,21 @@ public class GameManager : MonoBehaviour
             isolationPoint.transform.parent = isolationPointsParent.transform;
         }
 
-        dustDamage = Mathf.Max(dustDamage + dustDifficulty, 5);
+        foreach (var player in players)
+        {
+            player.canMove= true;
+            player.invincible = false;
+
+        }
+
+        GetCurrentInfected();
+        infectedParent.SetActive(true);
+
+
 
         yield return new WaitForSeconds(NEW_STAGE_COUNTDOWN);
+
+        dustDamage = Mathf.Min(dustDamage + dustDifficulty, 5);
 
         if (!gameOver) yield return NewStage();
     }

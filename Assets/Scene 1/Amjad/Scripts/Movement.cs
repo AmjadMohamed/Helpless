@@ -13,24 +13,22 @@ public class Movement : MonoBehaviour
     [HideInInspector]
     public Animator m_Animator;
 
-    PlayerController playerController;
+    PlayerController player;
     bool canPlayerMove;
 
     private void Start()
     {
         m_RigidBody = GetComponent<Rigidbody>();
         m_Animator = GetComponent<Animator>();
-        playerController = GetComponent<PlayerController>();
-        canPlayerMove = playerController.CanMove();
+        player = GetComponent<PlayerController>();
     }
 
 
     void FixedUpdate()
     {
-        
-        Mov.x = Input.GetAxis("Horizontal") * movementSpeed * (canPlayerMove ? 1 : 0);
+        Mov.x = Input.GetAxis("Horizontal") * movementSpeed * (player.canMove ? 1 : 0);
 
-        Mov.z = Input.GetAxis("Vertical") * movementSpeed * (canPlayerMove ? 1 : 0);
+        Mov.z = Input.GetAxis("Vertical") * movementSpeed * (player.canMove ? 1 : 0);
 
         //transform.Translate(Mov * Time.deltaTime, Space.World);
         m_RigidBody.velocity = Mov;

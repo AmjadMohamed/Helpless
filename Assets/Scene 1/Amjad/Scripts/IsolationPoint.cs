@@ -10,9 +10,8 @@ public class IsolationPoint : MonoBehaviour
         if (other.gameObject.tag == "Player")
         {
             PlayerController player = other.gameObject.GetComponent<PlayerController>();
-            player.SetMovement(false);
-            player.SetInvincibility(true);
-            Destroy(this.gameObject);
+            player.canMove = false;
+            player.invincible = true;
         }
     }
 
