@@ -64,6 +64,9 @@ public class GameManager : MonoBehaviour
             gameStart = false;
             // destroy player
             // display game over screen with sUrViVeD XX sTaGeS
+
+            LoseState();
+
         }
         else
         {
@@ -87,7 +90,7 @@ public class GameManager : MonoBehaviour
                 gameOver = mainPlayer.IsDead();
 
 
-                Debug.Log(mainPlayer.health);
+                //Debug.Log(mainPlayer.health);
 
             }
 
@@ -268,5 +271,11 @@ public class GameManager : MonoBehaviour
         }
 
         return sample;
+    }
+
+    public void LoseState()
+    {
+        UIManager.UIMgr.LosePanel.SetActive(true);
+        Time.timeScale = 0;
     }
 }

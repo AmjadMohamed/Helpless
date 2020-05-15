@@ -13,8 +13,14 @@ public class PlayerController : MonoBehaviour
     public RuntimeAnimatorController EnemyAnimatorController;
 
 
+    public Slider m_Slider;
+    public Image fill;
+    public GameObject PlayerCanvas;
+
     public bool canMove;
     public bool invincible;
+
+    [HideInInspector]
     public float health;
 
 
@@ -22,7 +28,7 @@ public class PlayerController : MonoBehaviour
     {
         m_InfectedPeople = GetComponent<InfectedPeople>();
 
-        if(!m_PlayerController)
+        if (!m_PlayerController)
         {
             m_PlayerController = this;
         }
@@ -33,15 +39,9 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
-        if(this.name == "Main Player")
-        {
-            if(m_Slider.value == 0)
-            {
-                LoseState();
-            }
-        }
-
         healthbar();
+
+        m_Slider.value = health;
     }
 
     private void OnTriggerEnter(Collider other)
@@ -54,20 +54,24 @@ public class PlayerController : MonoBehaviour
             }
 
 
-            else if (this.name == "Main Player")
+            else if (this.name == "Main Player" && !invincible)
             {
+
                 // get infected or lose
-                SkinnedMeshRenderer[] childs = GetComponentsInChildren<SkinnedMeshRenderer>();
+                /* SkinnedMeshRenderer[] childs = GetComponentsInChildren<SkinnedMeshRenderer>();
 
-                foreach (SkinnedMeshRenderer sm in childs)
-                {
-                    sm.GetComponent<SkinnedMeshRenderer>().material = InfectedMaterial;
-                }
+                 foreach (SkinnedMeshRenderer sm in childs)
+                 {
+                     sm.GetComponent<SkinnedMeshRenderer>().material = InfectedMaterial;
+                 }
 
-                LoseState();
+
+                 LoseState();*/
+                Kill();
+
             }
 
-            else
+            else if (this.name != "Main Player")
             {
                 this.transform.tag = "Infected";
                 SkinnedMeshRenderer[] childs = GetComponentsInChildren<SkinnedMeshRenderer>();
@@ -84,7 +88,7 @@ public class PlayerController : MonoBehaviour
 
                 // to destroy the health bar after getting infected
                 Destroy(PlayerCanvas);
-                
+
             }
         }
     }
@@ -122,10 +126,10 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    void LoseState()
+    void Kill()
     {
-        UIManager.UIMgr.LosePanel.SetActive(true);
-        Time.timeScale = 0;
+        health = 0;
+        GameManager.gm.LoseState();
     }
 
 
