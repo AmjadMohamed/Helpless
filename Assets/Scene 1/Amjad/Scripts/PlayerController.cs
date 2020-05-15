@@ -14,6 +14,7 @@ public class PlayerController : MonoBehaviour
 
     public Slider m_Slider;
     public Image fill;
+    public GameObject PlayerCanvas;
 
     private void Start()
     {
@@ -44,7 +45,6 @@ public class PlayerController : MonoBehaviour
         {
             if (this.transform.tag == "Infected")
             {
-
                 return;
             }
 
@@ -76,6 +76,10 @@ public class PlayerController : MonoBehaviour
                 GetComponent<Animator>().runtimeAnimatorController = EnemyAnimatorController;
 
                 UIManager.UIMgr.GotInfected++;
+
+                // to destroy the health bar after getting infected
+                Destroy(PlayerCanvas);
+                
             }
         }
     }

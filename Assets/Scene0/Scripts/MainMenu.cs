@@ -5,6 +5,15 @@ using UnityEngine.SceneManagement;
 
 public class MainMenu : MonoBehaviour
 {
+    public GameObject MainMenuPanel;
+    public GameObject ModesPanel;
+
+    public void ChooseMode()
+    {
+        MainMenuPanel.SetActive(false);
+        ModesPanel.SetActive(true);
+    }
+
     public void PlayGame()
     {
         SceneManager.LoadScene(1);

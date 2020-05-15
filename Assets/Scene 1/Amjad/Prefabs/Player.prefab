@@ -1123,6 +1123,7 @@ MonoBehaviour:
     type: 2}
   m_Slider: {fileID: 597366789}
   fill: {fileID: 1551788569}
+  PlayerCanvas: {fileID: 982298892}
 --- !u!195 &1194829501
 NavMeshAgent:
   m_ObjectHideFlags: 0
