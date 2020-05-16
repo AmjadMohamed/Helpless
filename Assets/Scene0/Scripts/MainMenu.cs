@@ -3,13 +3,20 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.Networking;
+using UnityEngine.Video;
 
 public class MainMenu : MonoBehaviour
 {
     public GameObject MainMenuPanel;
     public GameObject ModesPanel;
+    public VideoPlayer m_VideoPlayer;
 
     public LobbyManager Lobby;
+
+    private void Awake()
+    {
+        m_VideoPlayer.url = System.IO.Path.Combine(Application.streamingAssetsPath, "Mars.mp4");
+    }
 
     public void ChooseMode()
     {
