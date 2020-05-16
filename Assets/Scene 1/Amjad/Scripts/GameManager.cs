@@ -242,9 +242,10 @@ public class GameManager : MonoBehaviour
 
         points = GenerateRandomPoints(players.Count - 1);
         foreach (Vector3 point in points) {
-            var isolationPoint = Instantiate(isolationPointPrefab, point, Quaternion.identity, isolationPointsParent.transform);
+            var isolationPoint = Instantiate(isolationPointPrefab, point + new Vector3(0f , -2f , 0f), Quaternion.identity, isolationPointsParent.transform);
             isolationPoints.Add(isolationPoint.GetComponent<IsolationPoint>());
         }
+        
 
         // reset stage counter
         NewStageCountdown = NEW_STAGE_COUNTDOWN;
