@@ -91,8 +91,8 @@ public class GameManager : MonoBehaviour
         }
 
         // difficulty
-        //enemyCount = PlayerPrefs.GetInt("EnemyCount");
-        //dustDamage = PlayerPrefs.GetFloat("DustDmg");
+        enemyCount = PlayerPrefs.GetInt("EnemyCount");
+        dustDamage = PlayerPrefs.GetFloat("DustDmg");
     }
 
     void Update()
@@ -114,11 +114,13 @@ public class GameManager : MonoBehaviour
             {
                 if (Time.timeScale > 0f)
                 {
+                    Cursor.visible = true;
                     UIManager.UIMgr.PauseMenu.SetActive(true); // this brings up the pause UI
                     Time.timeScale = 0f; // this pauses the game action
                 }
                 else
                 {
+                    Cursor.visible = false;
                     Time.timeScale = 1f; // this unpauses the game action (ie. back to normal)
                     UIManager.UIMgr.PauseMenu.SetActive(false); // remove the pause UI
                     UIManager.UIMgr.SettingsPanel.SetActive(false);
@@ -167,12 +169,15 @@ public class GameManager : MonoBehaviour
 
     public void StartGameButton()
     {
+        Cursor.visible = false;
         UIManager.UIMgr.InstrutionsPanel.SetActive(false);
         Time.timeScale = 1;
         //audioSourceObject.SetActive(true);
 
         gameOver = false;
         StartCoroutine(NewGame());
+
+
     }
 
     IEnumerator NewGame()
