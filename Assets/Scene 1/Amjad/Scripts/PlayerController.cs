@@ -23,7 +23,7 @@ public class PlayerController : MonoBehaviour
     public bool canMove;
     public bool invincible;
 
-    public string targetTag = "IsolationPoint";
+    //public string targetTag = "IsolationPoint";
     public float targetLag = 2f;
 
     [HideInInspector]
@@ -127,33 +127,58 @@ public class PlayerController : MonoBehaviour
     {
         yield return new WaitForSeconds(targetLag);
 
-        currentTarget = GetClosestObjectWithTag(targetTag);
+        //currentTarget = GetClosestObjectWithTag(targetTag);
+        currentTarget = GetClosestFreeIsolationPoint();
     }
 
-    private GameObject GetClosestObjectWithTag(string tag)
+    private GameObject GetClosestFreeIsolationPoint()
     {
         GameObject result = null;
 
-        GameObject[] gameObjects = GameObject.FindGameObjectsWithTag(tag);
-        if (gameObjects != null)
+        float minDistance = float.MaxValue;
+        foreach (IsolationPoint isolationPoint in GameManager.gm.isolationPoints)
         {
-            float minDistance = float.MaxValue;
-            foreach (GameObject gameObject in gameObjects)
+            if (isolationPoint != null || isolationPoint.gameObject != null && !isolationPoint.noMore) // stupid but i am rushed
             {
-                float distance = Vector3.Distance(gameObject.transform.position, transform.position);
+                float distance = Vector3.Distance(isolationPoint.transform.position, transform.position);
                 if (distance < minDistance)
                 {
                     minDistance = distance;
-                    result = gameObject;
+                    result = isolationPoint.gameObject;
                 }
             }
-
-            if (result != null)
-                Debug.DrawLine(transform.position, result.transform.position, new Color(0f, 0f, 1f));
         }
+
+        if (result != null)
+            Debug.DrawLine(transform.position, result.transform.position, new Color(0f, 0f, 1f));
 
         return result;
     }
+
+    //private GameObject GetClosestObjectWithTag(string tag)
+    //{
+    //    GameObject result = null;
+
+    //    GameObject[] gameObjects = GameObject.FindGameObjectsWithTag(tag);
+    //    if (gameObjects != null)
+    //    {
+    //        float minDistance = float.MaxValue;
+    //        foreach (GameObject gameObject in gameObjects)
+    //        {
+    //            float distance = Vector3.Distance(gameObject.transform.position, transform.position);
+    //            if (distance < minDistance)
+    //            {
+    //                minDistance = distance;
+    //                result = gameObject;
+    //            }
+    //        }
+
+    //        if (result != null)
+    //            Debug.DrawLine(transform.position, result.transform.position, new Color(0f, 0f, 1f));
+    //    }
+
+    //    return result;
+    //}
 
     public void DealDamage(float amount) { health -= amount; }
     public bool IsDead() { return health <= 0; }

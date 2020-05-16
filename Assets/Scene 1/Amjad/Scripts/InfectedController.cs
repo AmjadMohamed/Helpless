@@ -46,14 +46,14 @@ public class InfectedController : MonoBehaviour
             }
 
             animator.SetBool("Chasing", true);
-            RenderDetectionCircle(Color.red);
+            //RenderDetectionCircle(Color.red);
         }
         else
         {
 
             rigidBody.velocity = Vector3.zero;
             animator.SetBool("Chasing", false);
-            RenderDetectionCircle(Color.yellow);
+            //RenderDetectionCircle(Color.yellow);
         }
 
     }
@@ -90,29 +90,29 @@ public class InfectedController : MonoBehaviour
         return result;
     }
 
-    public void RenderDetectionCircle(Color color)
-    {
-        //Destroy(lineRenderer);
-        lineRenderer = GetComponent<LineRenderer>();
-        lineRenderer.material = new Material(Shader.Find("Legacy Shaders/Particles/Additive"));
-        lineRenderer.SetColors(color, color);
-        lineRenderer.SetWidth(0.5f, 0.5f);
-        int numSegments = 128;
-        lineRenderer.SetVertexCount(numSegments + 1);
-        lineRenderer.useWorldSpace = false;
+    //public void RenderDetectionCircle(Color color)
+    //{
+    //    //Destroy(lineRenderer);
+    //    lineRenderer = GetComponent<LineRenderer>();
+    //    lineRenderer.material = new Material(Shader.Find("Legacy Shaders/Particles/Additive"));
+    //    lineRenderer.SetColors(color, color);
+    //    lineRenderer.SetWidth(0.5f, 0.5f);
+    //    int numSegments = 128;
+    //    lineRenderer.SetVertexCount(numSegments + 1);
+    //    lineRenderer.useWorldSpace = false;
 
-        float deltaTheta = (float)(fovAngle * Mathf.Deg2Rad) / numSegments;
-        float theta = 0f;
+    //    float deltaTheta = (float)(fovAngle * Mathf.Deg2Rad) / numSegments;
+    //    float theta = 0f;
 
-        for (int i = 0; i < numSegments + 1; i++)
-        {
-            float x = maxFovDistance * Mathf.Cos(theta);
-            float z = maxFovDistance * Mathf.Sin(theta);
-            Vector3 pos = new Vector3(x, 0, z);
-            lineRenderer.SetPosition(i, pos);
-            theta += deltaTheta;
-        }
-    }
+    //    for (int i = 0; i < numSegments + 1; i++)
+    //    {
+    //        float x = maxFovDistance * Mathf.Cos(theta);
+    //        float z = maxFovDistance * Mathf.Sin(theta);
+    //        Vector3 pos = new Vector3(x, 0, z);
+    //        lineRenderer.SetPosition(i, pos);
+    //        theta += deltaTheta;
+    //    }
+    //}
 
 
 }

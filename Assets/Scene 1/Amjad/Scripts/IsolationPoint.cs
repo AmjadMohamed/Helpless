@@ -4,16 +4,16 @@ using UnityEngine;
 
 public class IsolationPoint : MonoBehaviour
 {
+    public bool noMore = false;
 
     void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.tag == "Player" || other.gameObject.tag == "MainPlayer")
+        if (!noMore && (other.gameObject.tag == "Player" || other.gameObject.tag == "MainPlayer"))
         {
             PlayerController player = other.gameObject.GetComponent<PlayerController>();
             player.canMove = false;
             player.invincible = true;
-            GameManager.gm.isolationPoints.Remove(this);
-            Destroy(this.gameObject);
+            noMore = true;
         }
     }
 

@@ -227,18 +227,20 @@ public class GameManager : MonoBehaviour
 
         }
 
-        //for (int childIndex = 0; childIndex < isolationPointsParent.transform.childCount; childIndex++) {
-        //    Destroy(isolationPointsParent.transform.GetChild(childIndex).gameObject);
-        //}
-
-        if (isolationPoints != null && isolationPoints.Count != 0)
+        for (int childIndex = 0; childIndex < isolationPointsParent.transform.childCount; childIndex++)
         {
-            foreach (IsolationPoint isolationPoint in isolationPoints)
-            {
-                if (isolationPoint != null) Destroy(isolationPoint.gameObject);
-            }
+            Destroy(isolationPointsParent.transform.GetChild(childIndex).gameObject);
         }
         isolationPoints.Clear();
+
+        //if (isolationPoints != null && isolationPoints.Count != 0)
+        //{
+        //    foreach (IsolationPoint isolationPoint in isolationPoints)
+        //    {
+        //        if (isolationPoint != null) Destroy(isolationPoint.gameObject);
+        //    }
+        //}
+        //isolationPoints.Clear();
 
         points = GenerateRandomPoints(players.Count - 1);
         foreach (Vector3 point in points) {
