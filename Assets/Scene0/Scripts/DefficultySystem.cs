@@ -4,17 +4,35 @@ using UnityEngine;
 
 public class DefficultySystem : MonoBehaviour
 {
+    int enemyCount;
+    float DustDmg;
+
    public void EasyOption()
     {
-        Debug.Log("EASY");
+        enemyCount = 20;
+        DustDmg = 0.2f;
+        PlayerPrefs.SetInt("EnemyCount", enemyCount);
+        PlayerPrefs.SetFloat("DustDmg", DustDmg);
+
+        Debug.Log(PlayerPrefs.GetInt("EnemyCount") + " " + PlayerPrefs.GetFloat("DustDmg"));
     }
     public void MediumOption()
     {
-        Debug.Log("MEDIUM");
+        enemyCount = 40;
+        DustDmg = 0.4f;
+        PlayerPrefs.SetInt("EnemyCount", enemyCount);
+        PlayerPrefs.SetFloat("DustDmg", DustDmg);
+
+        Debug.Log(PlayerPrefs.GetInt("EnemyCount") + " " + PlayerPrefs.GetFloat("DustDmg"));
     }
 
     public void HardOption()
     {
-        Debug.Log("HARD");
+        enemyCount = 60;
+        DustDmg = 0.6f;
+        PlayerPrefs.SetInt("EnemyCount", enemyCount);
+        PlayerPrefs.SetFloat("DustDmg", DustDmg);
+
+        Debug.Log(PlayerPrefs.GetInt("EnemyCount") + " " + PlayerPrefs.GetFloat("DustDmg"));
     }
 }

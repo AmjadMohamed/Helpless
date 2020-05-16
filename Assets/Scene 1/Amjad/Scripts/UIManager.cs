@@ -14,6 +14,7 @@ public class UIManager : MonoBehaviour
     public GameObject InstrutionsPanel;
     public GameObject InGameUI;
     public GameObject LosePanel;
+    public GameObject SettingsPanel;
     public Text Alive_UI_Text;
     public Text WavesSurvived;
     public Text HighScore;

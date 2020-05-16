@@ -18,7 +18,7 @@ public class GameManager : MonoBehaviour
 
     // public fields
     public int playerCount = 20;
-    public int enemyCount = 40;
+    public int enemyCount;
     public float isolationPointsSpread = 100.0f;
     public List<PlayerController> players = new List<PlayerController>();
     public List<InfectedPeople> infected = new List<InfectedPeople>();
@@ -43,7 +43,7 @@ public class GameManager : MonoBehaviour
 
     // fields
     float isolationPointRadius;
-    float dustDamage = 0.5f;
+    float dustDamage ;
     float dustDifficulty = 0.5f;
     float time = 0f;
     float NewStageCountdown = NEW_STAGE_COUNTDOWN;
@@ -75,6 +75,10 @@ public class GameManager : MonoBehaviour
             playerGO.GetComponent<InfectedPeople>().SetWaypoints(infectedWaypoints);
             SetMainPlayer(playerGO.GetComponent<PlayerController>());
         }
+
+        // difficulty
+        enemyCount = PlayerPrefs.GetInt("EnemyCount");
+        dustDamage = PlayerPrefs.GetFloat("DustDmg");
     }
 
     void Update()
@@ -103,6 +107,7 @@ public class GameManager : MonoBehaviour
                 {
                     Time.timeScale = 1f; // this unpauses the game action (ie. back to normal)
                     UIManager.UIMgr.PauseMenu.SetActive(false); // remove the pause UI
+                    UIManager.UIMgr.SettingsPanel.SetActive(false);
                 }
             }
 
@@ -313,13 +318,13 @@ public class GameManager : MonoBehaviour
     void ScoreAndTimerUpdate()
     {
         // set timers
+        UIManager.UIMgr.StartTimerText.text = (NewGameCountdown).ToString("0");
         NewGameCountdown -= Time.deltaTime;
 
-        UIManager.UIMgr.StartTimerText.text = (NewGameCountdown).ToString("0");
-
-        NewStageCountdown -= Time.deltaTime;
 
         UIManager.UIMgr.StageTimerText.text = (NewStageCountdown).ToString("0");
+        NewStageCountdown -= Time.deltaTime;
+
 
         //set current wave score
         UIManager.UIMgr.CurrentWaveCounterText.text = "wave number: " + WaveCounter.ToString();
