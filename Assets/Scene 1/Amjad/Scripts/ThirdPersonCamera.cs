@@ -27,7 +27,7 @@ public class ThirdPersonCamera : MonoBehaviour
             instance = this;
         }
 
-        LookAt = GameObject.FindGameObjectWithTag("MainPlayer").transform;
+        LookAt = GameManager.gm.mainPlayer.transform;
     }
 
     private void Update()

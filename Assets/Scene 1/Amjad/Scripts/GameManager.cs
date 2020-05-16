@@ -218,7 +218,7 @@ public class GameManager : MonoBehaviour
             for (int i = 0; i < points.Count; i++)
             {
                 var point = points[i];
-                var infectedController = Instantiate(infectedPrefab, point, Quaternion.identity, infectedParent.transform)
+                var infectedController = Instantiate(infectedPrefab, point + new Vector3(0f, -2f, 0f), Quaternion.identity, infectedParent.transform)
                     .GetComponent<InfectedController>();
 
                 infectedController.name = $"Infected ({i})";
