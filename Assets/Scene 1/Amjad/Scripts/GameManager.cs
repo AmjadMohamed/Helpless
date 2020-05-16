@@ -18,10 +18,11 @@ public class GameManager : MonoBehaviour
 
     // public fields
     public int playerCount = 20;
-    public int enemyCount;
+    public int enemyCount = 20;
     public float isolationPointsSpread = 100.0f;
     public List<PlayerController> players = new List<PlayerController>();
-    public List<InfectedPeople> infected = new List<InfectedPeople>();
+    public List<InfectedController> infected = new List<InfectedController>();
+    public List<IsolationPoint> isolationPoints = new List<IsolationPoint>();
     //public GameObject audioSourceObject;
 
     // prefabs
@@ -31,11 +32,10 @@ public class GameManager : MonoBehaviour
     [SerializeField] GameObject normalPrefab = null;
     [SerializeField] GameObject isolationPointPrefab;
     [SerializeField] Transform rngArea;
-    [SerializeField] GameObject infectedParent;
+    [SerializeField] public GameObject infectedParent;
     [SerializeField] GameObject normalParent;
     [SerializeField] GameObject isolationPointsParent;
     [SerializeField] Transform[] rngExclude;
-    [SerializeField] Transform[] infectedWaypoints;
 
     // non-serialized fields
     [NonSerialized] public PlayerController mainPlayer;
@@ -43,7 +43,7 @@ public class GameManager : MonoBehaviour
 
     // fields
     float isolationPointRadius;
-    float dustDamage ;
+    float dustDamage = 0.5f;
     float dustDifficulty = 0.5f;
     float time = 0f;
     float NewStageCountdown = NEW_STAGE_COUNTDOWN;
@@ -56,6 +56,21 @@ public class GameManager : MonoBehaviour
 
     private void Awake()
     {
+        if (isolationPointsParent == null)
+        {
+            isolationPointsParent = new GameObject("Isolation Points");
+        }
+
+        if (normalParent == null)
+        {
+            normalParent = new GameObject("Players");
+        }
+
+        if (infectedParent == null)
+        {
+            infectedParent = new GameObject("Infected");
+        }
+
         // setup reference to game manager
         if (gm) {
             Destroy(GameManager.gm.gameObject);
@@ -72,13 +87,12 @@ public class GameManager : MonoBehaviour
 
         if (!NetworkClient.active && !NetworkServer.active) {
             var playerGO = Instantiate(mainPlayerPrefab);
-            playerGO.GetComponent<InfectedPeople>().SetWaypoints(infectedWaypoints);
             SetMainPlayer(playerGO.GetComponent<PlayerController>());
         }
 
         // difficulty
-        enemyCount = PlayerPrefs.GetInt("EnemyCount");
-        dustDamage = PlayerPrefs.GetFloat("DustDmg");
+        //enemyCount = PlayerPrefs.GetInt("EnemyCount");
+        //dustDamage = PlayerPrefs.GetFloat("DustDmg");
     }
 
     void Update()
@@ -176,15 +190,12 @@ public class GameManager : MonoBehaviour
         var points = GenerateRandomPoints(playerCount - 1); // except main player (-1)
         for (int i = 0; i < points.Count; i++) {
             var point = points[i];
-            var playerController = Instantiate(normalPrefab, point, Quaternion.identity, normalParent.transform)
-                .GetComponent<PlayerController>();
-
-            playerController.GetComponent<InfectedPeople>().SetWaypoints(infectedWaypoints);
-            playerController.name = $"Player ({i})";
-            playerController.GetComponentInChildren<Canvas>().worldCamera = mainCamera;
-            playerController.canMove = true;
-            playerController.invincible = false;
-            players.Add(playerController);
+            var player = Instantiate(normalPrefab, point, Quaternion.identity, normalParent.transform);
+            player.name = $"Player ({i})";
+            player.GetComponentInChildren<Canvas>().worldCamera = mainCamera;
+            player.GetComponent<PlayerController>().canMove = true;
+            player.GetComponent<PlayerController>().invincible = false;
+            players.Add(player.GetComponent<PlayerController>());
         }
 
         initialNormalCount = players.Count;
@@ -193,13 +204,7 @@ public class GameManager : MonoBehaviour
 
     IEnumerator NewStage()
     {
-        if (isolationPointsParent == null)  {
-            isolationPointsParent = new GameObject("Isolation Points");
-        }
-
-        for (int childIndex = 0; childIndex < isolationPointsParent.transform.childCount; childIndex++) {
-            Destroy(isolationPointsParent.transform.GetChild(childIndex).gameObject);
-        }
+        
 
         // create players
         List<Vector3> points;
@@ -210,20 +215,35 @@ public class GameManager : MonoBehaviour
             }
 
             points = GenerateRandomPoints(enemyCount);
-            for (int i = 0; i < points.Count; i++) {
+            for (int i = 0; i < points.Count; i++)
+            {
                 var point = points[i];
-                var infectedController = Instantiate(infectedPrefab, point, Quaternion.identity, normalParent.transform)
-                    .GetComponent<InfectedPeople>();
+                var infectedController = Instantiate(infectedPrefab, point, Quaternion.identity, infectedParent.transform)
+                    .GetComponent<InfectedController>();
 
                 infectedController.name = $"Infected ({i})";
-                infectedController.SetWaypoints(infectedWaypoints);
                 infected.Add(infectedController);
             }
+
         }
+
+        //for (int childIndex = 0; childIndex < isolationPointsParent.transform.childCount; childIndex++) {
+        //    Destroy(isolationPointsParent.transform.GetChild(childIndex).gameObject);
+        //}
+
+        if (isolationPoints != null && isolationPoints.Count != 0)
+        {
+            foreach (IsolationPoint isolationPoint in isolationPoints)
+            {
+                if (isolationPoint != null) Destroy(isolationPoint.gameObject);
+            }
+        }
+        isolationPoints.Clear();
 
         points = GenerateRandomPoints(players.Count - 1);
         foreach (Vector3 point in points) {
-            Instantiate(isolationPointPrefab, point, Quaternion.identity, isolationPointsParent.transform);
+            var isolationPoint = Instantiate(isolationPointPrefab, point, Quaternion.identity, isolationPointsParent.transform);
+            isolationPoints.Add(isolationPoint.GetComponent<IsolationPoint>());
         }
 
         // reset stage counter

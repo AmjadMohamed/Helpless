@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 4738335124284017076}
   m_Layer: 0
   m_Name: IsolationPoint
-  m_TagString: Untagged
+  m_TagString: IsolationPoint
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

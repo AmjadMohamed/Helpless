@@ -12,6 +12,8 @@ public class IsolationPoint : MonoBehaviour
             PlayerController player = other.gameObject.GetComponent<PlayerController>();
             player.canMove = false;
             player.invincible = true;
+            GameManager.gm.isolationPoints.Remove(this);
+            Destroy(this.gameObject);
         }
     }
 

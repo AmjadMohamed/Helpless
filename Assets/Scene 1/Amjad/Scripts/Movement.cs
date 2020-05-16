@@ -27,7 +27,6 @@ public class Movement : MonoBehaviour
     void FixedUpdate()
     {
         Mov.x = Input.GetAxis("Horizontal") * movementSpeed * (player.canMove ? 1 : 0);
-
         Mov.z = Input.GetAxis("Vertical") * movementSpeed * (player.canMove ? 1 : 0);
 
         //transform.Translate(Mov * Time.deltaTime, Space.World);
