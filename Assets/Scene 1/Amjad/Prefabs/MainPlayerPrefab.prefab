@@ -685,7 +685,7 @@ GameObject:
   - component: {fileID: 3224446323559085850}
   m_Layer: 0
   m_Name: MainPlayerPrefab
-  m_TagString: Player
+  m_TagString: MainPlayer
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -825,7 +825,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_PatrolNextLag: 1
-  m_Target: []
   m_AgroDisctance: 15
 --- !u!1 &4483662510101562503
 GameObject:

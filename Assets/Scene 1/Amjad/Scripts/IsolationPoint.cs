@@ -7,7 +7,7 @@ public class IsolationPoint : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.tag == "Player")
+        if (other.gameObject.tag == "Player" || other.gameObject.tag == "MainPlayer")
         {
             PlayerController player = other.gameObject.GetComponent<PlayerController>();
             player.canMove = false;
