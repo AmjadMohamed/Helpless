@@ -16,6 +16,9 @@ public class MainMenu : MonoBehaviour
     private void Awake()
     {
         m_VideoPlayer.url = System.IO.Path.Combine(Application.streamingAssetsPath, "Mars.mp4");
+
+        PlayerPrefs.SetInt("EnemyCount", 20);
+        PlayerPrefs.SetFloat("DustDmg", 0.2f);
     }
 
     public void ChooseMode()

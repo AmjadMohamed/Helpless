@@ -11,14 +11,25 @@ public class InfectedController : MonoBehaviour
     [Range(0f, 360f)]
     public float fovAngle = 360f;
     public float maxFovDistance = 10f;
-    public float targetLag = 3f;
+    public float targetLag = 0f;
     public float speed = 8f;
-    
+
+
+    public GameObject SpawnEffect;
+
 
     GameObject currentTarget;
     Animator animator;
     Rigidbody rigidBody;
     LineRenderer lineRenderer;
+
+    private Vector3 mov;
+
+    private void Start()
+    {
+        var effect = Instantiate(SpawnEffect, transform.position, transform.rotation);
+        Destroy(effect, 2.5f);
+    }
 
     void Awake()
     {
@@ -31,7 +42,8 @@ public class InfectedController : MonoBehaviour
     void Update()
     {
         StartCoroutine(GetNextLocation());
-
+        mov = rigidBody.velocity;
+        mov.y = rigidBody.velocity.y;
         
 
         if (currentTarget != null)

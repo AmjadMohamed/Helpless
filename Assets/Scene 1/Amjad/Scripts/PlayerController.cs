@@ -10,9 +10,11 @@ using UnityEditor;
 public class PlayerController : MonoBehaviour
 {
     private GameObject currentTarget;
+    private Vector3 mov;
 
     Animator animator;
     NavMeshAgent agent;
+    Rigidbody m_rigidbody;
 
     public Slider healthSlider;
     public Image fill;
@@ -24,9 +26,9 @@ public class PlayerController : MonoBehaviour
     public bool invincible;
 
     //public string targetTag = "IsolationPoint";
-    public float targetLag = 2f;
+    public float targetLag = 0;
 
-    [HideInInspector]
+
     public float health;
 
     [System.NonSerialized]
@@ -35,6 +37,7 @@ public class PlayerController : MonoBehaviour
 
     void Awake()
     {
+        m_rigidbody = GetComponent<Rigidbody>();
         animator = GetComponent<Animator>();
         animator.SetBool("Running", true);
 
@@ -50,28 +53,49 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
+        if (IsDead())
+        {
+            InfectPlayer();
+        }
+
         UpdateHealthBar();
 
         if (isMainPlayer)
         {
             if (!canMove)
             {
+                m_rigidbody.isKinematic = true;
                 GetComponent<Movement>().enabled = false;
-                GetComponent<Rigidbody>().velocity = Vector3.zero;
+                m_rigidbody.velocity = Vector3.zero;
+
+                animator.SetBool("Walking", false);
+                animator.SetBool("Running", false);
+                animator.SetBool("MoveHolding", false);
             }
             else
             {
+                m_rigidbody.isKinematic = false;
                 GetComponent<Movement>().enabled = true;
             }
         }
         else
         {
+
             if (!canMove)
             {
-                GetComponent<Rigidbody>().velocity = Vector3.zero;
+                m_rigidbody.velocity = Vector3.zero;
+                agent.enabled = false;
+                m_rigidbody.isKinematic = true;
+                animator.SetBool("Walking", false);
+                animator.SetBool("Running", false);
+                animator.SetBool("MoveHolding", false);
             }
             else
             {
+                agent.enabled = true;
+                m_rigidbody.isKinematic = false;
+                mov = m_rigidbody.velocity;
+                mov.y = m_rigidbody.velocity.y;
                 if (agent == null || agent.pathPending)
                     return;
 
@@ -84,8 +108,14 @@ public class PlayerController : MonoBehaviour
                 }
                 else
                 {
-                    agent.destination = transform.position;
+                    //agent.destination = transform.position;
+
+                    //agent.destination = GetClosestFreeIsolationPoint().transform;
+                    agent.destination = GameManager.gm.GenerateRandomPoints(1)[0];
                 }
+
+                animator.SetBool("Running", true);
+
             }
         }
     }
@@ -107,17 +137,14 @@ public class PlayerController : MonoBehaviour
                 if (!invincible)
                 {
                     KillMainPlayer();
+
                 }
             }
             else
             {
                 if (!invincible)
                 {
-                    GameManager.gm.infected.Add(Instantiate(infectedPrefab, transform.position, transform.rotation, GameManager.gm.infectedParent.transform).GetComponent<InfectedController>());
-                    GameManager.gm.players.Remove(this);
-                    UIManager.UIMgr.GotInfected++;
-                    Destroy(PlayerCanvas);
-                    Destroy(this.gameObject);
+                    InfectPlayer();
                 }
             }
         }
@@ -219,7 +246,19 @@ public class PlayerController : MonoBehaviour
     {
         health = 0;
 
-        UIManager.UIMgr.LosePanel.SetActive(true);
-        Time.timeScale = 0;
+        Cursor.visible = true;
+        GameManager.gm.LoseState();
+    }
+
+    void InfectPlayer()
+    {
+        if (!isMainPlayer)
+        {
+            GameManager.gm.infected.Add(Instantiate(infectedPrefab, transform.position, transform.rotation, GameManager.gm.infectedParent.transform).GetComponent<InfectedController>());
+            GameManager.gm.players.Remove(this);
+            UIManager.UIMgr.GotInfected++;
+            Destroy(PlayerCanvas);
+            Destroy(this.gameObject);
+        }
     }
 }

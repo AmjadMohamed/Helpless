@@ -28,13 +28,15 @@ public class Movement : MonoBehaviour
     {
         Mov.x = Input.GetAxis("Horizontal") * movementSpeed * (player.canMove ? 1 : 0);
         Mov.z = Input.GetAxis("Vertical") * movementSpeed * (player.canMove ? 1 : 0);
+        Mov.y = m_RigidBody.velocity.y;
 
         //transform.Translate(Mov * Time.deltaTime, Space.World);
         m_RigidBody.velocity = Mov;
 
-        if (Mov != Vector3.zero)
+        if (Mov.x != 0 || Mov.z != 0)
         {
             transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(Mov), .15f);
+
         }
 
 
@@ -44,10 +46,10 @@ public class Movement : MonoBehaviour
             m_Animator.SetBool("Running", true);
             m_Animator.SetBool("Walking", false);
 
-           // Debug.Log("it is working");
+            // Debug.Log("it is working");
         }
 
-        else if(Mov.x != 0 || Mov.z != 0)
+        else if (Mov.x != 0 || Mov.z != 0)
         {
             movementSpeed = 10;
             m_Animator.SetBool("Running", false);
@@ -59,5 +61,9 @@ public class Movement : MonoBehaviour
             m_Animator.SetBool("Walking", false);
             m_Animator.SetBool("Running", false);
         }
+
+
+
+        
     }
 }

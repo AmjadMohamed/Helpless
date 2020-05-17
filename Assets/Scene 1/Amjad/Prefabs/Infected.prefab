@@ -15185,7 +15185,7 @@ NavMeshObstacle:
   m_Enabled: 1
   serializedVersion: 3
   m_Shape: 0
-  m_Extents: {x: 10, y: 15, z: 10}
+  m_Extents: {x: 8, y: 15, z: 8}
   m_MoveThreshold: 0.1
   m_Carve: 0
   m_CarveOnlyStationary: 1
@@ -15206,8 +15206,9 @@ MonoBehaviour:
   fovAngle: 360
   maxFovDistance: 10
   targetLag: 3
-  targetTag: Player
   speed: 10
+  SpawnEffect: {fileID: 7164281976514496468, guid: 36b2c4278c53cd449b19d30b2c92b83f,
+    type: 3}
 --- !u!1 &4996564390330491082
 GameObject:
   m_ObjectHideFlags: 0

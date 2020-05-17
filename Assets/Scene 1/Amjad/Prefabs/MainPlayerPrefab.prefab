@@ -684,7 +684,7 @@ GameObject:
   - component: {fileID: -3745405809549319629}
   m_Layer: 0
   m_Name: MainPlayerPrefab
-  m_TagString: MainPlayer
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -697,7 +697,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4159376874288562671}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 2.8, z: 16.45}
+  m_LocalPosition: {x: 0, y: 5.67, z: 16.45}
   m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
   m_Children:
   - {fileID: 2370941303643994038}
@@ -809,7 +809,6 @@ MonoBehaviour:
     type: 3}
   canMove: 1
   invincible: 0
-  targetTag: 
   targetLag: 1
   health: 0
 --- !u!1 &4483662510101562503

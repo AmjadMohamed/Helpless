@@ -72,7 +72,8 @@ public class GameManager : MonoBehaviour
         }
 
         // setup reference to game manager
-        if (gm) {
+        if (gm)
+        {
             Destroy(GameManager.gm.gameObject);
         }
 
@@ -85,14 +86,15 @@ public class GameManager : MonoBehaviour
         var collider = isolationPointPrefab.GetComponent<CapsuleCollider>();
         isolationPointRadius = collider.radius * collider.transform.localScale.x;
 
-        if (!NetworkClient.active && !NetworkServer.active) {
+        if (!NetworkClient.active && !NetworkServer.active)
+        {
             var playerGO = Instantiate(mainPlayerPrefab);
             SetMainPlayer(playerGO.GetComponent<PlayerController>());
         }
 
         // difficulty
         enemyCount = PlayerPrefs.GetInt("EnemyCount");
-        dustDamage = PlayerPrefs.GetFloat("DustDmg");
+        dustDifficulty = PlayerPrefs.GetFloat("DustDmg");
     }
 
     void Update()
@@ -105,7 +107,7 @@ public class GameManager : MonoBehaviour
             // destroy player
             // display game over screen with sUrViVeD XX sTaGeS
 
-            //LoseState();
+            LoseState();
 
         }
         else
@@ -154,15 +156,18 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void SetMainPlayer(PlayerController player) {
-        if (mainPlayer != null) {
+    public void SetMainPlayer(PlayerController player)
+    {
+        if (mainPlayer != null)
+        {
             mainPlayer.isMainPlayer = false;
             players.Remove(mainPlayer);
         }
 
         mainPlayer = player;
         mainPlayer.isMainPlayer = true;
-        if (mainPlayer != null) {
+        if (mainPlayer != null)
+        {
             players.Add(mainPlayer);
         }
     }
@@ -183,7 +188,7 @@ public class GameManager : MonoBehaviour
     IEnumerator NewGame()
     {
         UIManager.UIMgr.StartTimer.SetActive(true);
-        
+
 
         yield return new WaitForSeconds(NEW_GAME_COUNTDOWN);
 
@@ -193,7 +198,8 @@ public class GameManager : MonoBehaviour
         gameStart = true;
 
         var points = GenerateRandomPoints(playerCount - 1); // except main player (-1)
-        for (int i = 0; i < points.Count; i++) {
+        for (int i = 0; i < points.Count; i++)
+        {
             var point = points[i];
             var player = Instantiate(normalPrefab, point, Quaternion.identity, normalParent.transform);
             player.name = $"Player ({i})";
@@ -209,12 +215,14 @@ public class GameManager : MonoBehaviour
 
     IEnumerator NewStage()
     {
-        
+
 
         // create players
         List<Vector3> points;
-        if (!NetworkClient.active && !NetworkServer.active) {
-            foreach (var player in players) {
+        if (!NetworkClient.active && !NetworkServer.active)
+        {
+            foreach (var player in players)
+            {
                 player.canMove = true;
                 player.invincible = false;
             }
@@ -248,11 +256,12 @@ public class GameManager : MonoBehaviour
         //isolationPoints.Clear();
 
         points = GenerateRandomPoints(players.Count - 1);
-        foreach (Vector3 point in points) {
-            var isolationPoint = Instantiate(isolationPointPrefab, point + new Vector3(0f , -2f , 0f), Quaternion.identity, isolationPointsParent.transform);
+        foreach (Vector3 point in points)
+        {
+            var isolationPoint = Instantiate(isolationPointPrefab, point + new Vector3(0f, -2f, 0f), Quaternion.identity, isolationPointsParent.transform);
             isolationPoints.Add(isolationPoint.GetComponent<IsolationPoint>());
         }
-        
+
 
         // reset stage counter
         NewStageCountdown = NEW_STAGE_COUNTDOWN;
@@ -265,7 +274,7 @@ public class GameManager : MonoBehaviour
         if (!gameOver) yield return NewStage();
     }
 
-    List<Vector3> GenerateRandomPoints(int N)
+    public List<Vector3> GenerateRandomPoints(int N)
     {
         List<Vector3> result = new List<Vector3>();
 
@@ -337,11 +346,11 @@ public class GameManager : MonoBehaviour
         return sample;
     }
 
-    /*public void LoseState()
+    public void LoseState()
     {
         UIManager.UIMgr.LosePanel.SetActive(true);
         Time.timeScale = 0;
-    }*/
+    }
 
     void ScoreAndTimerUpdate()
     {

@@ -4,10 +4,10 @@ using UnityEngine;
 
 public class DefficultySystem : MonoBehaviour
 {
-    int enemyCount;
-    float DustDmg;
+    int enemyCount; 
+    float DustDmg; 
 
-   public void EasyOption()
+    public void EasyOption()
     {
         enemyCount = 20;
         DustDmg = 0.2f;

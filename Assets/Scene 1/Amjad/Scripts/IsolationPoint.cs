@@ -5,6 +5,13 @@ using UnityEngine;
 public class IsolationPoint : MonoBehaviour
 {
     public bool noMore = false;
+    public GameObject usedPoint;
+    public GameObject originalPoint;
+    private GameObject original;
+    private void Start()
+    {
+        original = Instantiate(originalPoint, transform.position, transform.rotation, this.transform);
+    }
 
     void OnTriggerEnter(Collider other)
     {
@@ -14,7 +21,11 @@ public class IsolationPoint : MonoBehaviour
             player.canMove = false;
             player.invincible = true;
             noMore = true;
+            Destroy(original);
+            Instantiate(usedPoint, transform.position, transform.rotation, this.transform);
         }
+
+
     }
 
 
